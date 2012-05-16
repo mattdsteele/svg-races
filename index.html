@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
+  </head>
+  <body>
+  </body>
+  <script>
+    var w = 400;
+    var h = 400;
+    var r = Math.min(w,h) / 2;
+    var color = d3.scale.category20();
+    var donut = d3.layout.pie();
+    var arc = d3.svg.arc().innerRadius(0).outerRadius(r);
+    var data = [1,4,2,6,4];
+
+    var vis = d3.select('body')
+      .append('svg:svg')
+      .data([data])
+      .attr('width', w)
+      .attr('height', h);
+
+    var arcs = vis.selectAll('g.arc')
+      .data(donut.value(function(g) { return g }))
+      .enter()
+        .append('svg:g')
+        .attr('class', 'arc')
+        .attr('transform', 'translate(' + r + ',' + r + ')');
+
+    arcs.append('svg:path')
+      .attr('fill', function(d,i) { return color(i) })
+      .attr('d', arc);
+  </script>
+</html>
