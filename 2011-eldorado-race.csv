@@ -1,4 +1,4 @@
-Place,No,Name,Town,St,Age,S,Swim Plc,Swim Time,Swim Pace,T1 Plc,T1 Time,Bike Plc,Bike Time,Bike Pace,T2 Plc,T2 Time,Run Plc,RunTime,Run Pace,Place,Time
+place,bib,name,town,state,age,sex,swimPlace,swimTime,swimPace,T1Place,T1Time,bikePlace,bikeTime,bikePace,T2Place,T2Time,runPlace,runTime,runPace,place,time
 1,61,Kevin Nickel,Newton,KS,30,M,1,20:41,1:04,6,0:36,2,61:02,24.4,7,0:34,1,38:34,6:14,1,2:01:25 
 2,15,Lee Walther,Oklahoma City,OK,51,M,3,21:26,1:06,8,0:36,3,61:48,24.1,23,0:52,3,41:32,6:42,2,2:06:12 
 3,27,Moises Torres,Bel aire,KS,31,M,2,21:03,1:05,5,0:34,4,65:29,22.7,4,0:30,4,41:53,6:46,3,2:09:27 

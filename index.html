@@ -6,29 +6,33 @@
   <body>
   </body>
   <script>
-    var w = 400;
-    var h = 400;
-    var r = Math.min(w,h) / 2;
-    var color = d3.scale.category20();
-    var donut = d3.layout.pie();
-    var arc = d3.svg.arc().innerRadius(0).outerRadius(r);
-    var data = [1,4,2,6,4];
+    var data;
+    var width=600;
+    var height=400;
+    d3.csv('2011-eldorado-race.csv', function(a) {
+      data = a;
 
-    var vis = d3.select('body')
-      .append('svg:svg')
-      .data([data])
-      .attr('width', w)
-      .attr('height', h);
+    var x = d3.scale.ordinal()
+      .domain(d3.range(data.length));
+    
+    var y = d3.scale.linear()
+    .domain([0, 80])
+    .range(0, height);
 
-    var arcs = vis.selectAll('g.arc')
-      .data(donut.value(function(g) { return g }))
+    svg.selectAll('rect')
+      .data(data)
       .enter()
-        .append('svg:g')
-        .attr('class', 'arc')
-        .attr('transform', 'translate(' + r + ',' + r + ')');
+        .append('rect')
+        .attr('x', x.rangeBand())
+        .attr('y', function(y) { return y.age; })
+        .attr('width', 5)
+        .attr('height', function(y) { return y.age; });
+    });
 
-    arcs.append('svg:path')
-      .attr('fill', function(d,i) { return color(i) })
-      .attr('d', arc);
+
+    var svg = d3.select('body').append('svg')
+      .attr('width', width)
+      .attr('height',height);
+
   </script>
 </html>
