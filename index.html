@@ -2,37 +2,43 @@
 <html>
   <head>
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
+    <style>
+      .chart rect {
+        fill: steelblue;
+      }
+      .chart {
+        width: 100%;
+      }
+    </style>
   </head>
   <body>
   </body>
   <script>
-    var data;
     var width=600;
     var height=400;
-    d3.csv('2011-eldorado-race.csv', function(a) {
-      data = a;
+    d3.csv('2011-eldorado-race.csv', function(data) {
 
     var x = d3.scale.ordinal()
-      .domain(d3.range(data.length));
+    .domain(d3.range(data.length))
+    .rangeBands([0,width], 0.1);
     
     var y = d3.scale.linear()
-    .domain([0, 80])
-    .range(0, height);
+    .domain([0, 60])
+    .range([0, height]);
+
+    var svg = d3.select('body').append('svg')
+      .attr('class', 'chart')
+      .attr('width', width)
+      .attr('height',height);
 
     svg.selectAll('rect')
       .data(data)
       .enter()
         .append('rect')
-        .attr('x', x.rangeBand())
-        .attr('y', function(y) { return y.age; })
-        .attr('width', 5)
-        .attr('height', function(y) { return y.age; });
+        .attr('x', function(d,i ) { return x(i);} )
+        .attr('y', function(d) { return height - y(d.age); })
+        .attr('width', x.rangeBand())
+        .attr('height', function(d) { return y(d.age); });
     });
-
-
-    var svg = d3.select('body').append('svg')
-      .attr('width', width)
-      .attr('height',height);
-
   </script>
 </html>
