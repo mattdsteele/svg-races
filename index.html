@@ -43,6 +43,18 @@
       .attr('height', function(d) { return y.range()[0] - y(d.y); })
       .order();
 
+      svg.selectAll('text.datalabel')
+      .data(data)
+      .enter()
+      .append('svg:text')
+      .attr('x', function(d,i) { return x(d.x); })
+      .attr('y', function(d,i) { return y(d.y); })
+      .attr('dx', x.rangeBand() / 2)
+      .attr('dy', '1.2em')
+      .attr('text-anchor', 'middle')
+      .attr('fill', 'white')
+      .text(function(d) { return d.length; })
+      .attr('class', 'datalabel');
     });
   </script>
 </html>
