@@ -21,7 +21,6 @@
   <script>
     var toSeconds = function(time) {
       var splitTime = time.split(/:/);
-      console.log(splitTime);
       return (parseInt(splitTime[0]) * 60) 
               + parseInt(splitTime[1]) 
               + (parseInt(splitTime[2]) / 60);
@@ -86,6 +85,7 @@
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.svg.axis()
         .scale(x)
+        .tickFormat(d3.format('f'))
         .orient('bottom'));
     });
   </script>
