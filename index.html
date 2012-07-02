@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
+    <script src="http://d3js.org/d3.v2.js"></script>
     <style>
       .chart rect {
         fill: steelblue;
@@ -19,15 +19,21 @@
   <body>
   </body>
   <script>
+    var toSeconds = function(time) {
+      var splitTime = time.split(/:/);
+      console.log(splitTime);
+      return (parseInt(splitTime[0]) * 60) 
+              + parseInt(splitTime[1]) 
+              + (parseInt(splitTime[2]) / 60);
+    }
     var margin ={ left: 30, right: 20, top: 20, bottom: 20};
     var width=800 - margin.left - margin.right;
     var height=400 - margin.top - margin.bottom;
     d3.csv('2011-eldorado-race.csv', function(data) {
 
-      var histogram = d3.layout.histogram();
-      data = data.map(function(x) { return x.age; });
+      data = data.map(function(x) { return toSeconds(x.time); });
 
-      data = histogram(data);
+      data = d3.layout.histogram().bins(10)(data);
 
       var x = d3.scale.ordinal()
       .domain(data.map(function(d) { return d.x; }))
@@ -69,20 +75,18 @@
       .attr('class', 'datalabel');
 
       //axis
-      var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient('left');
-
       svg.append('g')
       .attr('class', 'y axis')
-      .call(yAxis);
+      .call(d3.svg.axis()
+        .scale(y)
+        .orient('left'));
 
       svg.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.svg.axis()
-      .scale(x)
-      .orient('bottom'));
+        .scale(x)
+        .orient('bottom'));
     });
   </script>
 </html>
