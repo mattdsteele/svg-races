@@ -85,8 +85,20 @@
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.svg.axis()
         .scale(x)
-        .tickFormat(d3.format('f'))
         .orient('bottom'));
+
+        function pad(num, size) {
+          var s = num+"";
+          while (s.length < size) s = "0" + s;
+          return s;
+        }
+      svg.selectAll('.x.axis text')
+      .text(function(d) { 
+          d = d.toFixed();
+          var hours = Math.floor(d / 60);
+          var minutes = pad((d % 60), 2);
+          return hours + ":" + minutes;
+      });
     });
   </script>
 </html>
