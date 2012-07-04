@@ -32,7 +32,7 @@
 
       data = data.map(function(x) { return toSeconds(x.time); });
 
-      data = d3.layout.histogram().bins(10)(data);
+      data = d3.layout.histogram().bins(15)(data);
 
       var x = d3.scale.ordinal()
       .domain(data.map(function(d) { return d.x; }))
@@ -52,12 +52,15 @@
       //bars
       svg.selectAll('rect')
       .data(data)
-        .enter().append('rect')
-      .attr('width', x.rangeBand())
-      .attr('x', function(d) { return x(d.x); })
-      .attr('y', function(d) { return y(d.y); })
-      .attr('height', function(d) { return y.range()[0] - y(d.y); })
-      .order();
+      .enter().append('rect')
+        .attr('width', x.rangeBand())
+        .attr('x', function(d) { return x(d.x); })
+        .attr('y', function(d) { return y(d.y); })
+        .attr('height', function(d) { return y.range()[0] - y(d.y); })
+        .order()
+      .transition()
+        .duration(2000)
+        .style('fill', '#bada55');
 
       //labels
       svg.selectAll('text.datalabel')
