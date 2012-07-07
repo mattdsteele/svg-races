@@ -63,8 +63,10 @@
 
         bar.append('rect')
         .attr('x', 1)
-        .attr('width', x(data[0].dx) - 1)
-        .attr('height', function(d) { return height - y(d.y); });
+        .attr('height', function(d) { return height - y(d.y); })
+        .transition()
+        .duration(2000)
+        .attr('width', x(data[0].dx) - 1);
 
         bar.append('text')
         .attr('dy', '.75em')
