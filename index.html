@@ -9,6 +9,9 @@
       .chart text {
         fill: black;
       }
+      .bar text {
+        fill: #fff;
+      }
       .axis path, .axis line {
         fill: none;
         stroke: black;
@@ -19,24 +22,22 @@
   <body>
   </body>
   <script>
-    var toSeconds = function(time) {
+    var toMinutes = function(time) {
       var splitTime = time.split(/:/);
-      return (parseInt(splitTime[0]) * 60) 
-              + parseInt(splitTime[1]) 
-              + (parseInt(splitTime[2]) / 60);
+      return  (parseInt(splitTime[0]) * 60) + parseInt(splitTime[1]);
     }
     var margin ={ left: 30, right: 20, top: 20, bottom: 20};
     var width=800 - margin.left - margin.right;
     var height=400 - margin.top - margin.bottom;
     d3.csv('2011-eldorado-race.csv', function(data) {
 
-      data = data.map(function(x) { return toSeconds(x.time); });
+      var data = data.map(function(x) { return toMinutes(x.time); });
 
-      data = d3.layout.histogram().bins(15)(data);
+      var x = d3.scale.linear()
+      .domain([ 0, 250 ])
+      .range([ 0, width ]);
 
-      var x = d3.scale.ordinal()
-      .domain(data.map(function(d) { return d.x; }))
-      .rangeBands([0,width], 0.1);
+      data = d3.layout.histogram().bins(x.ticks(20))(data);
 
       var y = d3.scale.linear()
       .domain([0, d3.max(data, function(d) { return d.y; })])
@@ -49,59 +50,43 @@
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-      //bars
-      svg.selectAll('rect')
-      .data(data)
-      .enter().append('rect')
-        .attr('width', x.rangeBand())
-        .attr('x', function(d) { return x(d.x); })
-        .attr('y', function(d) { return y(d.y); })
-        .attr('height', function(d) { return y.range()[0] - y(d.y); })
-        .order()
-      .transition()
-        .duration(2000)
-        .style('fill', '#bada55');
+      var formatCount = d3.format(",.0f");
+      var formatTime = d3.time.format("%H:%M");
+      var formatMinutes = function(d) { return formatTime(new Date(2012, 0, 1, 0, d)); };
 
-      //labels
-      svg.selectAll('text.datalabel')
-      .data(data)
-      .enter()
-      .append('svg:text')
-      .attr('x', function(d,i) { return x(d.x); })
-      .attr('y', function(d,i) { return y(d.y); })
-      .attr('dx', x.rangeBand() / 2)
-      .attr('dy', '1.2em')
-      .attr('text-anchor', 'middle')
-      .attr('fill', 'white')
-      .text(function(d) { return d.length; })
-      .attr('class', 'datalabel');
+      //bars
+      var bar = svg.selectAll('.bar')
+        .data(data)
+        .enter().append('g')
+        .attr('class', 'bar')
+        .attr('transform', function(d) { return 'translate(' + x(d.x) + ',' + y(d.y) + ')'; });
+
+        bar.append('rect')
+        .attr('x', 1)
+        .attr('width', x(data[0].dx) - 1)
+        .attr('height', function(d) { return height - y(d.y); });
+
+        bar.append('text')
+        .attr('dy', '.75em')
+        .attr('y', 6)
+        .attr('x', x(data[0].dx) / 2)
+        .attr('text-anchor', 'middle')
+        .text(function(d) { return formatCount(d.y); });
 
       //axis
-      svg.append('g')
-      .attr('class', 'y axis')
-      .call(d3.svg.axis()
-        .scale(y)
-        .orient('left'));
-
-      svg.append('g')
-      .attr('class', 'x axis')
-      .attr('transform', 'translate(0,' + height + ')')
+        svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + height + ')')
       .call(d3.svg.axis()
         .scale(x)
-        .orient('bottom'));
+        .orient('bottom')
+        .tickFormat(formatMinutes));
 
-        function pad(num, size) {
-          var s = num+"";
-          while (s.length < size) s = "0" + s;
-          return s;
-        }
-      svg.selectAll('.x.axis text')
-      .text(function(d) { 
-          d = d.toFixed();
-          var hours = Math.floor(d / 60);
-          var minutes = pad((d % 60), 2);
-          return hours + ":" + minutes;
-      });
+        svg.append('g')
+        .attr('class', 'y axis')
+        .call(d3.svg.axis()
+        .scale(y)
+        .orient('left'));
     });
   </script>
 </html>
