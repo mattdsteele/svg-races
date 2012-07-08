@@ -20,6 +20,10 @@
     </style>
   </head>
   <body>
+    <section>
+    <button id="eldorado" onclick="generate('2011-eldorado-race.csv')">El Dorado</button>
+    <button id="deva" onclick="generate('2012-deva-triathlon-july-1.csv')">Deva</button>
+    </section>
   </body>
   <script>
     var toMinutes = function(time) {
@@ -37,36 +41,49 @@
     .append('g')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    var generate = function(data) {
-      var formatCount = d3.format(",.0f");
-      var formatTime = d3.time.format("%H:%M");
-      var formatMinutes = function(d) { return formatTime(new Date(2012, 0, 1, 0, d)); };
+    var x = d3.scale.linear()
+    .domain([ 0, 250 ])
+    .range([ 0, width ]);
 
+    var y = d3.scale.linear()
+    .domain([0, 130])
+    .range([height, 0 ]);
+
+    var formatCount = d3.format(",.0f");
+    var formatTime = d3.time.format("%H:%M");
+    var formatMinutes = function(d) { return formatTime(new Date(2012, 0, 1, 0, d)); };
+    var redraw = function(data) {
       var data = data.map(function(x) { return toMinutes(x.time); });
-
-      var x = d3.scale.linear()
-      .domain([ 0, 250 ])
-      .range([ 0, width ]);
-
       data = d3.layout.histogram().bins(x.ticks(20))(data);
+      var bar = svg.selectAll('.bar').data(data)
+      .transition()
+      .duration(2000)
+      .attr('transform', function(d) { return 'translate(' + x(d.x) + ',' + y(d.y) + ')'; });
 
-      var y = d3.scale.linear()
-      .domain([0, d3.max(data, function(d) { return d.y; })])
-      .range([height, 0 ]);
-
-
-      //bars
-      var bar = svg.selectAll('.bar')
+      var rect = svg.selectAll('.bar rect')
       .data(data)
-      .enter().append('g')
+      .transition()
+      .duration(2000)
+      .attr('height', function(d) { return height - y(d.y); });
+
+      var text = svg.selectAll('.bar text')
+      .data(data)
+      .text(function(d) { return formatCount(d.y); });
+    }
+
+    var draw = function(data) {
+      var data = data.map(function(x) { return toMinutes(x.time); });
+      data = d3.layout.histogram().bins(x.ticks(20))(data);
+      //bars
+      var bar = svg.selectAll('.bar').data(data);
+
+      bar.enter().append('g')
       .attr('class', 'bar')
       .attr('transform', function(d) { return 'translate(' + x(d.x) + ',' + y(d.y) + ')'; });
 
       bar.append('rect')
       .attr('x', 1)
       .attr('height', function(d) { return height - y(d.y); })
-      .transition()
-      .duration(2000)
       .attr('width', x(data[0].dx) - 1);
 
       bar.append('text')
@@ -91,7 +108,11 @@
       .scale(y)
       .orient('left'));
     }
-    //d3.csv('2011-eldorado-race.csv', function(data) {
-      d3.csv('2012-deva-triathlon-july-1.csv', generate);
+    //d3.csv('2011-eldorado-race.csv', draw);
+    d3.csv('2012-deva-triathlon-july-1.csv', draw);
+
+    function generate(fileName) {
+      d3.csv(fileName, redraw);
+    }
     </script>
   </html>
