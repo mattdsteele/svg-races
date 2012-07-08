@@ -23,6 +23,7 @@
     <section>
     <button id="eldorado" onclick="generate('2011-eldorado-race.csv')">El Dorado</button>
     <button id="deva" onclick="generate('2012-deva-triathlon-july-1.csv')">Deva</button>
+    <button id="worlds" onclick="generate('2012-world-championships.csv')">Worlds</button>
     </section>
   </body>
   <script>
@@ -53,8 +54,14 @@
     var formatTime = d3.time.format("%H:%M");
     var formatMinutes = function(d) { return formatTime(new Date(2012, 0, 1, 0, d)); };
     var redraw = function(data) {
+    
       var data = data.map(function(x) { return toMinutes(x.time); });
       data = d3.layout.histogram().bins(x.ticks(20))(data);
+
+      var y = d3.scale.linear()
+      .domain([0, d3.max(data, function(d) { return d.y })])
+      .range([height, 0 ]);
+
       var bar = svg.selectAll('.bar').data(data)
       .transition()
       .duration(2000)
@@ -69,6 +76,12 @@
       var text = svg.selectAll('.bar text')
       .data(data)
       .text(function(d) { return formatCount(d.y); });
+
+
+      svg.selectAll('.y.axis')
+      .call(d3.svg.axis()
+      .scale(y)
+      .orient('left'));
     }
 
     var draw = function(data) {
@@ -108,7 +121,6 @@
       .scale(y)
       .orient('left'));
     }
-    //d3.csv('2011-eldorado-race.csv', draw);
     d3.csv('2012-deva-triathlon-july-1.csv', draw);
 
     function generate(fileName) {
