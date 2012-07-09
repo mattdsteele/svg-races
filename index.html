@@ -3,8 +3,12 @@
   <head>
     <script src="http://d3js.org/d3.v2.js"></script>
     <style>
-      .chart rect {
-        fill: steelblue;
+      #buttons {
+        font-family: 'Helvetica';
+        background-color:#e1ebbd;
+      }
+      #buttons ul {
+        list-style: none;
       }
       .chart text {
         fill: black;
@@ -20,10 +24,12 @@
     </style>
   </head>
   <body>
-    <section>
-    <button id="eldorado" onclick="generate('2011-eldorado-race.csv')">El Dorado</button>
-    <button id="deva" onclick="generate('2012-deva-triathlon-july-1.csv')">Deva</button>
-    <button id="worlds" onclick="generate('2012-world-championships.csv')">Worlds</button>
+    <section id="buttons" style="float: right">
+    <ul>
+      <li><label><input type="radio" name="option" onclick="generate('2011-eldorado-race.csv')" /> El Dorado Lake Triathlon</label></li>
+      <li><label><input type="radio" name="option" onclick="generate('2012-deva-triathlon-july-1.csv')" checked /> Deva Triathlon (Chester)</label></li>
+      <li><label><input type="radio" name="option" onclick="generate('2012-world-championships.csv')" /> Banyoles ITU Triathlon World Cup</label></li>
+    </ul>
     </section>
   </body>
   <script>
@@ -31,7 +37,7 @@
       var splitTime = time.split(/:/);
       return (parseInt(splitTime[0]) * 60) + parseInt(splitTime[1]);
     }
-    var margin = { left: 30, right: 20, top: 20, bottom: 20};
+    var margin = { left: 40, right: 20, top: 20, bottom: 20};
     var width=800 - margin.left - margin.right;
     var height=400 - margin.top - margin.bottom;
 
@@ -53,6 +59,8 @@
     var formatCount = d3.format(",.0f");
     var formatTime = d3.time.format("%H:%M");
     var formatMinutes = function(d) { return formatTime(new Date(2012, 0, 1, 0, d)); };
+
+    var  generate = function(fileName) { d3.csv(fileName, redraw); }
     var redraw = function(data) {
     
       var data = data.map(function(x) { return toMinutes(x.time); });
@@ -71,7 +79,9 @@
       .data(data)
       .transition()
       .duration(2000)
+      .attr('fill', function(d) { return '#'+Math.floor(Math.random()*16777215).toString(16); })
       .attr('height', function(d) { return height - y(d.y); });
+
 
       var text = svg.selectAll('.bar text')
       .data(data)
@@ -97,6 +107,7 @@
       bar.append('rect')
       .attr('x', 1)
       .attr('height', function(d) { return height - y(d.y); })
+      .attr('fill', 'steelblue')
       .attr('width', x(data[0].dx) - 1);
 
       bar.append('text')
@@ -123,8 +134,5 @@
     }
     d3.csv('2012-deva-triathlon-july-1.csv', draw);
 
-    function generate(fileName) {
-      d3.csv(fileName, redraw);
-    }
     </script>
   </html>
