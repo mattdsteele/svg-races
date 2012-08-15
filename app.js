@@ -44,7 +44,7 @@ var svg = d3.select('body').append('svg')
             .data(data)
             .transition()
             .duration(2000)
-            .attr('fill', function(d) { return '#'+Math.floor(Math.random()*16777215).toString(16); })
+            .attr('fill', '#'+Math.floor(Math.random()*16777215).toString(16) )
             .attr('height', function(d) { return height - y(d.y); });
 
 
