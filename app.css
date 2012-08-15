@@ -1,0 +1,19 @@
+
+#buttons {
+  font-family: 'Helvetica';
+  background-color:#e1ebbd;
+}
+#buttons ul {
+  list-style: none;
+}
+.chart text {
+  fill: black;
+}
+.bar text {
+  fill: #fff;
+}
+.axis path, .axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
